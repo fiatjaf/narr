@@ -21,7 +21,7 @@ func (s *Storage) CreateFeed(title, description, link, feedLink string, folderId
 		title = feedLink
 	}
 	row := s.db.QueryRow(`
-		insert into feeds (title, description, link, feed_link, folder_id) 
+		insert into feeds (title, description, link, feed_link, folder_id)
 		values (?, ?, ?, ?, ?)
 		on conflict (feed_link) do update set folder_id = ?
         returning id`,

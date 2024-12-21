@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"io/ioutil"
+	"os"
 	"strings"
 )
 
@@ -44,5 +44,5 @@ func main() {
 	out := strings.ReplaceAll(rsrc, "{VERSION}", version)
 	out = strings.ReplaceAll(out, "{VERSION_COMMA}", version_comma)
 
-	ioutil.WriteFile(outfile, []byte(out), 0644)
+	os.WriteFile(outfile, []byte(out), 0644)
 }

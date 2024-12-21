@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime"
 	"net/http"
 	"net/url"
@@ -29,7 +28,6 @@ type DiscoverResult struct {
 }
 
 func DiscoverFeed(candidateUrl string) (*DiscoverResult, error) {
-
 	// see if its nostr
 	foundNostr, result := discoverNostr(candidateUrl)
 	if foundNostr {
@@ -88,13 +86,15 @@ func DiscoverFeed(candidateUrl string) (*DiscoverResult, error) {
 	return result, nil
 }
 
-var emptyIcon = make([]byte, 0)
-var imageTypes = map[string]bool{
-	"image/x-icon": true,
-	"image/png":    true,
-	"image/jpeg":   true,
-	"image/gif":    true,
-}
+var (
+	emptyIcon  = make([]byte, 0)
+	imageTypes = map[string]bool{
+		"image/x-icon": true,
+		"image/png":    true,
+		"image/jpeg":   true,
+		"image/gif":    true,
+	}
+)
 
 func findFavicon(siteUrl, feedUrl string) (*[]byte, error) {
 	urls := make([]string, 0)
@@ -110,7 +110,7 @@ func findFavicon(siteUrl, feedUrl string) (*[]byte, error) {
 	if siteUrl != "" {
 		if res, err := client.get(siteUrl); err == nil {
 			defer res.Body.Close()
-			if body, err := ioutil.ReadAll(res.Body); err == nil {
+			if body, err := io.ReadAll(res.Body); err == nil {
 				urls = append(urls, scraper.FindIcons(string(body), siteUrl)...)
 				if c := favicon(siteUrl); c != "" {
 					urls = append(urls, c)
@@ -137,7 +137,7 @@ func getIcons(urls []string) (*[]byte, error) {
 			continue
 		}
 
-		content, err := ioutil.ReadAll(res.Body)
+		content, err := io.ReadAll(res.Body)
 		if err != nil {
 			continue
 		}

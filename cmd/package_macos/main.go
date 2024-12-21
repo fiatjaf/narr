@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -72,11 +71,11 @@ func main() {
 	os.MkdirAll(binDir, 0700)
 	os.MkdirAll(resDir, 0700)
 
-	f, _ := ioutil.ReadFile(path.Join(outdir, outfile))
-	ioutil.WriteFile(path.Join(binDir, outfile), f, 0755)
+	f, _ := os.ReadFile(path.Join(outdir, outfile))
+	os.WriteFile(path.Join(binDir, outfile), f, 0755)
 
-	ioutil.WriteFile(plistFile, []byte(strings.Replace(plist, "VERSION", version, 1)), 0644)
-	ioutil.WriteFile(pkginfoFile, []byte("APPL????"), 0644)
+	os.WriteFile(plistFile, []byte(strings.Replace(plist, "VERSION", version, 1)), 0644)
+	os.WriteFile(pkginfoFile, []byte("APPL????"), 0644)
 
 	iconFile := path.Join(outdir, "icon.png")
 	iconsetDir := path.Join(outdir, "icon.iconset")
