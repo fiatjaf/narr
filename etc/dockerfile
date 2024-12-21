@@ -7,7 +7,7 @@ RUN make build_linux
 FROM alpine:latest
 RUN apk add --no-cache ca-certificates && \
     update-ca-certificates
-COPY --from=build /src/_output/linux/yarr /usr/local/bin/yarr
+COPY --from=build /src/_output/linux/narr /usr/local/bin/narr
 EXPOSE 7070
-ENTRYPOINT ["/usr/local/bin/yarr"]
-CMD ["-addr", "0.0.0.0:7070", "-db", "/data/yarr.db"]
+ENTRYPOINT ["/usr/local/bin/narr"]
+CMD ["-addr", "0.0.0.0:7070", "-db", "/data/narr.db"]

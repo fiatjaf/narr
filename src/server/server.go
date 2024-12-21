@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/nkanaev/yarr/src/storage"
-	"github.com/nkanaev/yarr/src/worker"
+	"github.com/fiatjaf/narr/src/storage"
+	"github.com/fiatjaf/narr/src/worker"
 )
 
 type Server struct {

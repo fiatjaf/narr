@@ -13,7 +13,7 @@ import (
 	"github.com/nbd-wtf/go-nostr/nip05"
 	"github.com/nbd-wtf/go-nostr/nip19"
 	"github.com/nbd-wtf/go-nostr/sdk"
-	"github.com/nkanaev/yarr/src/parser"
+	"github.com/fiatjaf/narr/src/parser"
 	"github.com/yuin/goldmark"
 )
 

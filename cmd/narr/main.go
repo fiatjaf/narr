@@ -10,10 +10,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/nkanaev/yarr/src/platform"
-	"github.com/nkanaev/yarr/src/server"
-	"github.com/nkanaev/yarr/src/storage"
-	"github.com/nkanaev/yarr/src/worker"
+	"github.com/fiatjaf/narr/src/platform"
+	"github.com/fiatjaf/narr/src/server"
+	"github.com/fiatjaf/narr/src/storage"
+	"github.com/fiatjaf/narr/src/worker"
 )
 
 var Version string = "0.0"
@@ -61,14 +61,14 @@ func main() {
 		fmt.Fprintln(out, " ", strings.Join(OptList, ", "))
 	}
 
-	flag.StringVar(&addr, "addr", opt("YARR_ADDR", "127.0.0.1:7070"), "address to run server on")
-	flag.StringVar(&basepath, "base", opt("YARR_BASE", ""), "base path of the service url")
-	flag.StringVar(&authfile, "auth-file", opt("YARR_AUTHFILE", ""), "`path` to a file containing username:password. Takes precedence over --auth (or YARR_AUTH)")
-	flag.StringVar(&auth, "auth", opt("YARR_AUTH", ""), "string with username and password in the format `username:password`")
-	flag.StringVar(&certfile, "cert-file", opt("YARR_CERTFILE", ""), "`path` to cert file for https")
-	flag.StringVar(&keyfile, "key-file", opt("YARR_KEYFILE", ""), "`path` to key file for https")
-	flag.StringVar(&db, "db", opt("YARR_DB", ""), "storage file `path`")
-	flag.StringVar(&logfile, "log-file", opt("YARR_LOGFILE", ""), "`path` to log file to use instead of stdout")
+	flag.StringVar(&addr, "addr", opt("NARR_ADDR", "127.0.0.1:7070"), "address to run server on")
+	flag.StringVar(&basepath, "base", opt("NARR_BASE", ""), "base path of the service url")
+	flag.StringVar(&authfile, "auth-file", opt("NARR_AUTHFILE", ""), "`path` to a file containing username:password. Takes precedence over --auth (or NARR_AUTH)")
+	flag.StringVar(&auth, "auth", opt("NARR_AUTH", ""), "string with username and password in the format `username:password`")
+	flag.StringVar(&certfile, "cert-file", opt("NARR_CERTFILE", ""), "`path` to cert file for https")
+	flag.StringVar(&keyfile, "key-file", opt("NARR_KEYFILE", ""), "`path` to key file for https")
+	flag.StringVar(&db, "db", opt("NARR_DB", ""), "storage file `path`")
+	flag.StringVar(&logfile, "log-file", opt("NARR_LOGFILE", ""), "`path` to log file to use instead of stdout")
 	flag.BoolVar(&ver, "version", false, "print application version")
 	flag.BoolVar(&open, "open", false, "open the server in browser")
 	flag.Parse()
@@ -96,7 +96,7 @@ func main() {
 			log.Fatal("Failed to get config dir: ", err)
 		}
 
-		storagePath := filepath.Join(configPath, "yarr")
+		storagePath := filepath.Join(configPath, "narr")
 		if err := os.MkdirAll(storagePath, 0755); err != nil {
 			log.Fatal("Failed to create app config dir: ", err)
 		}

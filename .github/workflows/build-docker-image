@@ -4,7 +4,7 @@ on:
     tags: [ 'v*.*.*', 'v*.*', 'v*', 'latest' ]
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: nkanaev/yarr
+  IMAGE_NAME: fiatjaf/narr
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest

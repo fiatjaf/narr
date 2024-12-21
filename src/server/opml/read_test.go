@@ -59,7 +59,7 @@ func TestParse(t *testing.T) {
 }
 
 func TestParseFallback(t *testing.T) {
-	// as reported in https://github.com/nkanaev/yarr/pull/56
+	// as reported in https://github.com/fiatjaf/narr/pull/56
 	// the feed below comes without `outline[text]` & `outline[type=rss]` attributes
 	have, _ := Parse(strings.NewReader(`
 		<?xml version="1.0" encoding="utf-8"?>

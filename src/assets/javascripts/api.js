@@ -5,7 +5,7 @@
     init = init || {}
     if (['post', 'put', 'delete'].indexOf(init.method) !== -1) {
       init['headers'] = init['headers'] || {}
-      init['headers']['x-requested-by'] = 'yarr'
+      init['headers']['x-requested-by'] = 'narr'
     }
     return fetch(resource, init)
   }

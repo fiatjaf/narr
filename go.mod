@@ -1,4 +1,4 @@
-module github.com/nkanaev/yarr
+module github.com/fiatjaf/narr
 
 go 1.23.3
 

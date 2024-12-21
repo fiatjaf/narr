@@ -17,17 +17,17 @@ var plist = `<?xml version="1.0" encoding="UTF-8"?>
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>yarr</string>
+	<string>narr</string>
 	<key>CFBundleDisplayName</key>
-	<string>yarr</string>
+	<string>narr</string>
 	<key>CFBundleIdentifier</key>
-	<string>nkanaev.yarr</string>
+	<string>fiatjaf.narr</string>
 	<key>CFBundleVersion</key>
 	<string>VERSION</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleExecutable</key>
-	<string>yarr</string>
+	<string>narr</string>
 
 	<key>CFBundleIconFile</key>
 	<string>icon</string>
@@ -42,7 +42,7 @@ var plist = `<?xml version="1.0" encoding="UTF-8"?>
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2020 nkanaev. All rights reserved.</string>
+	<string>Copyright © 2020 fiatjaf. All rights reserved.</string>
 </dict>
 </plist>
 `
@@ -61,13 +61,13 @@ func main() {
 	flag.StringVar(&outdir, "outdir", "", "")
 	flag.Parse()
 
-	outfile := "yarr"
+	outfile := "narr"
 
-	binDir := path.Join(outdir, "yarr.app", "Contents/MacOS")
-	resDir := path.Join(outdir, "yarr.app", "Contents/Resources")
+	binDir := path.Join(outdir, "narr.app", "Contents/MacOS")
+	resDir := path.Join(outdir, "narr.app", "Contents/Resources")
 
-	plistFile := path.Join(outdir, "yarr.app", "Contents/Info.plist")
-	pkginfoFile := path.Join(outdir, "yarr.app", "Contents/PkgInfo")
+	plistFile := path.Join(outdir, "narr.app", "Contents/Info.plist")
+	pkginfoFile := path.Join(outdir, "narr.app", "Contents/PkgInfo")
 
 	os.MkdirAll(binDir, 0700)
 	os.MkdirAll(resDir, 0700)

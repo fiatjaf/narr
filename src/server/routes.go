@@ -11,17 +11,17 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/nkanaev/yarr/src/assets"
-	"github.com/nkanaev/yarr/src/content/htmlutil"
-	"github.com/nkanaev/yarr/src/content/readability"
-	"github.com/nkanaev/yarr/src/content/sanitizer"
-	"github.com/nkanaev/yarr/src/content/silo"
-	"github.com/nkanaev/yarr/src/server/auth"
-	"github.com/nkanaev/yarr/src/server/gzip"
-	"github.com/nkanaev/yarr/src/server/opml"
-	"github.com/nkanaev/yarr/src/server/router"
-	"github.com/nkanaev/yarr/src/storage"
-	"github.com/nkanaev/yarr/src/worker"
+	"github.com/fiatjaf/narr/src/assets"
+	"github.com/fiatjaf/narr/src/content/htmlutil"
+	"github.com/fiatjaf/narr/src/content/readability"
+	"github.com/fiatjaf/narr/src/content/sanitizer"
+	"github.com/fiatjaf/narr/src/content/silo"
+	"github.com/fiatjaf/narr/src/server/auth"
+	"github.com/fiatjaf/narr/src/server/gzip"
+	"github.com/fiatjaf/narr/src/server/opml"
+	"github.com/fiatjaf/narr/src/server/router"
+	"github.com/fiatjaf/narr/src/storage"
+	"github.com/fiatjaf/narr/src/worker"
 )
 
 func (s *Server) handler() http.Handler {
@@ -83,8 +83,8 @@ func (s *Server) handleStatic(c *router.Context) {
 func (s *Server) handleManifest(c *router.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"$schema":     "https://json.schemastore.org/web-manifest-combined.json",
-		"name":        "yarr!",
-		"short_name":  "yarr",
+		"name":        "narr!",
+		"short_name":  "narr",
 		"description": "yet another rss reader",
 		"display":     "standalone",
 		"start_url":   s.BasePath,

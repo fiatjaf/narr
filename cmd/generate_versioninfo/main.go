@@ -17,10 +17,10 @@ BEGIN
       VALUE "CompanyName", "Old MacDonald's Farm"
       VALUE "FileDescription", "Yet another RSS reader"
       VALUE "FileVersion", "{VERSION}"
-      VALUE "InternalName", "yarr"
-      VALUE "LegalCopyright", "nkanaev"
-      VALUE "OriginalFilename", "yarr.exe"
-      VALUE "ProductName", "yarr"
+      VALUE "InternalName", "narr"
+      VALUE "LegalCopyright", "fiatjaf"
+      VALUE "OriginalFilename", "narr.exe"
+      VALUE "ProductName", "narr"
       VALUE "ProductVersion", "{VERSION}"
     END
   END

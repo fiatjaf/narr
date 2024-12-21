@@ -30,7 +30,7 @@ RUN env \
     go build \
         -tags "sqlite_foreign_keys linux" \
         -ldflags="-s -w" \
-        -o /root/out/yarr.arm64 ./cmd/yarr
+        -o /root/out/narr.arm64 ./cmd/narr
 
 RUN env \
         CC=arm-linux-gnueabihf-gcc \
@@ -39,6 +39,6 @@ RUN env \
     go build \
         -tags "sqlite_foreign_keys linux" \
         -ldflags="-s -w" \
-        -o /root/out/yarr.arm7 ./cmd/yarr
+        -o /root/out/narr.arm7 ./cmd/narr
 
 CMD ["/bin/bash"]

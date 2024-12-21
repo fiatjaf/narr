@@ -6,7 +6,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/nkanaev/yarr/src/content/htmlutil"
+	"github.com/fiatjaf/narr/src/content/htmlutil"
 )
 
 type atomFeed struct {

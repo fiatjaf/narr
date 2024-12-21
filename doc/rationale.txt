@@ -1,7 +1,7 @@
 # goal
 
 The goal is to ship a (subjectively ergonomic) software for reading feeds.
-*yarr* is not designed/intended to be used as an archiving tool.
+*narr* is not designed/intended to be used as an archiving tool.
 
 The initial goal was to serve the author's needs:
 a desktop application accessible via web browser

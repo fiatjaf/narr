@@ -30,7 +30,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: macos
-        path: _output/macos/yarr.app
+        path: _output/macos/narr.app
 
   build_windows:
     name: Build for Windows
@@ -57,7 +57,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: windows
-        path: _output/windows/yarr.exe
+        path: _output/windows/narr.exe
 
   build_linux:
     name: Build for Linux
@@ -84,7 +84,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: linux
-        path: _output/linux/yarr
+        path: _output/linux/narr
 
   create_release:
     name: Create Release
@@ -109,20 +109,20 @@ jobs:
     - name: Preparation
       run: |
         ls -R
-        chmod u+x macos/Contents/MacOS/yarr
-        chmod u+x linux/yarr
+        chmod u+x macos/Contents/MacOS/narr
+        chmod u+x linux/narr
 
-        mv macos yarr.app     && zip -r yarr-macos.zip yarr.app
-        mv windows/yarr.exe . && zip yarr-windows.zip yarr.exe
-        mv linux/yarr .       && zip yarr-linux.zip yarr
+        mv macos narr.app     && zip -r narr-macos.zip narr.app
+        mv windows/narr.exe . && zip narr-windows.zip narr.exe
+        mv linux/narr .       && zip narr-linux.zip narr
     - name: Upload MacOS
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./yarr-macos.zip
-          asset_name: yarr-${{ github.ref }}-macos64.zip
+          asset_path: ./narr-macos.zip
+          asset_name: narr-${{ github.ref }}-macos64.zip
           asset_content_type: application/zip
     - name: Upload Windows
       uses: actions/upload-release-asset@v1
@@ -130,8 +130,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./yarr-windows.zip
-          asset_name: yarr-${{ github.ref }}-windows64.zip
+          asset_path: ./narr-windows.zip
+          asset_name: narr-${{ github.ref }}-windows64.zip
           asset_content_type: application/zip
     - name: Upload Linux
       uses: actions/upload-release-asset@v1
@@ -139,6 +139,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./yarr-linux.zip
-          asset_name: yarr-${{ github.ref }}-linux64.zip
+          asset_path: ./narr-linux.zip
+          asset_name: narr-${{ github.ref }}-linux64.zip
           asset_content_type: application/zip
