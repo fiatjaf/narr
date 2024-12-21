@@ -4,8 +4,6 @@ on:
   push:
     tags: ['v*', 'test*']
 
-  workflow_dispatch:
-
 jobs:
   build_macos:
     name: Build for MacOS
