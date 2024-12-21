@@ -4,13 +4,15 @@ on:
   push:
     tags: ['v*', 'test*']
 
+  workflow_dispatch:
+
 jobs:
   build_macos:
     name: Build for MacOS
     runs-on: macos-13
     steps:
     - name: "Checkout"
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: 'recursive'
     - name: "Setup Go"
@@ -18,7 +20,7 @@ jobs:
       with:
         go-version: '^1.17'
     - name: Cache Go Modules
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -37,7 +39,7 @@ jobs:
     runs-on: windows-2022
     steps:
     - name: "Checkout"
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: 'recursive'
     - name: "Setup Go"
@@ -45,7 +47,7 @@ jobs:
       with:
         go-version: '^1.17'
     - name: Cache Go Modules
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -61,10 +63,10 @@ jobs:
 
   build_linux:
     name: Build for Linux
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
     - name: "Checkout"
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: 'recursive'
     - name: "Setup Go"
@@ -72,7 +74,7 @@ jobs:
       with:
         go-version: '^1.17'
     - name: Cache Go Modules
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
