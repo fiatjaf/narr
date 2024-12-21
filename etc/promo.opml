@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.1">
+<head><title>subscriptions</title></head>
+<body>
+  <outline type="rss" text="BTCsessions" xmlUrl="nostr:nprofile1qqspnzgrfett3asxcuj0gksje6z2zxzpvgd27uvz58m9vsuqh8zzw6cpz3mhxue69uhhyetvv9ujuerpd46hxtnfduq3yamnwvaz7tmhda6zuat50phjummwv538ugex" htmlUrl="https://njump.me/nprofile1qqspnzgrfett3asxcuj0gksje6z2zxzpvgd27uvz58m9vsuqh8zzw6cpz3mhxue69uhhyetvv9ujuerpd46hxtnfduq3yamnwvaz7tmhda6zuat50phjummwv538ugex"/>
+  <outline type="rss" text="Changelog" xmlUrl="https://changelog.com/feed.json" htmlUrl="https://changelog.com/"/>
+  <outline type="rss" text="Economic Forces" xmlUrl="https://pricetheory.substack.com/feed" htmlUrl="https://pricetheory.substack.com/feed"/>
+  <outline type="rss" text="Ed Zitron&#39;s Where&#39;s Your Ed At" xmlUrl="https://www.wheresyoured.at/rss/" htmlUrl="https://www.wheresyoured.at/rss/"/>
+  <outline type="rss" text="fiatjaf" xmlUrl="nostr:nprofile1qqsrhuxx8l9ex335q7he0f09aej04zpazpl0ne2cgukyawd24mayt8gpz3mhxue69uhhyetvv9ujuerpd46hxtnfduqs6amnwvaz7tmwdaejumr0dsfg70ls" htmlUrl="https://njump.me/nprofile1qqsrhuxx8l9ex335q7he0f09aej04zpazpl0ne2cgukyawd24mayt8gpz3mhxue69uhhyetvv9ujuerpd46hxtnfduqs6amnwvaz7tmwdaejumr0dsfg70ls"/>
+  <outline type="rss" text="Gigi" xmlUrl="nostr:nprofile1qqsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycpz3mhxue69uhhyetvv9ujuerpd46hxtnfduqs6amnwvaz7tmwdaejumr0dsrfszv7" htmlUrl="https://njump.me/nprofile1qqsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycpz3mhxue69uhhyetvv9ujuerpd46hxtnfduqs6amnwvaz7tmwdaejumr0dsrfszv7"/>
+  <outline type="rss" text="hodlbod" xmlUrl="nostr:nprofile1qqsf03c2gsmx5ef4c9zmxvlew04gdh7u94afnknp33qvv3c94kvwxgspr3mhxue69uhksmmyd33x7epwvdhhyctrd3jjuar0dak8xtcppemhxue69uhkummn9ekx7mp0jcm77l" htmlUrl="https://njump.me/nprofile1qqsf03c2gsmx5ef4c9zmxvlew04gdh7u94afnknp33qvv3c94kvwxgspr3mhxue69uhksmmyd33x7epwvdhhyctrd3jjuar0dak8xtcppemhxue69uhkummn9ekx7mp0jcm77l"/>
+  <outline type="rss" text="inamerrata" xmlUrl="https://www.erisian.com.au/wordpress/feed" htmlUrl="https://www.erisian.com.au/wordpress"/>
+  <outline type="rss" text="Joel on Software" xmlUrl="https://www.joelonsoftware.com/feed/" htmlUrl="https://www.joelonsoftware.com"/>
+  <outline type="rss" text="kerivin" xmlUrl="nostr:nprofile1qqszaszc8f76kmtlacew7r2jt5x2tff22d0mymkgsfe9jthmv0eqmagpzemhxue69uhhyetvv9ujuurjd9kkzmpwdejhgqgjwaehxw309ac82unsd3jhqct89ejhxnajwwk" htmlUrl="https://njump.me/nprofile1qqszaszc8f76kmtlacew7r2jt5x2tff22d0mymkgsfe9jthmv0eqmagpzemhxue69uhhyetvv9ujuurjd9kkzmpwdejhgqgjwaehxw309ac82unsd3jhqct89ejhxnajwwk"/>
+  <outline type="rss" text="Lobsters" xmlUrl="https://lobste.rs/rss" htmlUrl="https://lobste.rs/rss"/>
+  <outline type="rss" text="Marginal REVOLUTION" xmlUrl="https://marginalrevolution.com/feed" htmlUrl="https://marginalrevolution.com/"/>
+  <outline type="rss" text="Mises Institute" xmlUrl="https://mises.org/rss.xml" htmlUrl="https://mises.org/"/>
+  <outline type="rss" text="Mises Wire" xmlUrl="https://mises.org/wire/rss.xml" htmlUrl="https://mises.org/"/>
+  <outline type="rss" text="oyl" xmlUrl="nostr:nprofile1qqsyklzwud3g5vc7z0lelt2v3x3ae6rfegnuzccl6gfx4k0v3n276ngpzemhxue69uhhyetvv9ujumn0wd68ytnzv9hxgqgjwaehxw309amk7apww468smewdahx2ukvda4" htmlUrl="https://njump.me/nprofile1qqsyklzwud3g5vc7z0lelt2v3x3ae6rfegnuzccl6gfx4k0v3n276ngpzemhxue69uhhyetvv9ujumn0wd68ytnzv9hxgqgjwaehxw309amk7apww468smewdahx2ukvda4"/>
+  <outline type="rss" text="PABLOF7z" xmlUrl="nostr:nprofile1qqs04xzt6ldm9qhs0ctw0t58kf4z57umjzmjg6jywu0seadwtqqc75spz4mhxue69uhhyetvv9ujuerpd46hxtnfduhsz9mhwden5te0wfjkccte9ec8y6tdv9kzumn9wshs3yzth5" htmlUrl="https://njump.me/nprofile1qqs04xzt6ldm9qhs0ctw0t58kf4z57umjzmjg6jywu0seadwtqqc75spz4mhxue69uhhyetvv9ujuerpd46hxtnfduhsz9mhwden5te0wfjkccte9ec8y6tdv9kzumn9wshs3yzth5"/>
+  <outline type="rss" text="Public" xmlUrl="https://michaelshellenberger.substack.com/feed" htmlUrl="https://michaelshellenberger.substack.com/feed"/>
+  <outline type="rss" text="ribbonfarm" xmlUrl="https://www.ribbonfarm.com/feed/" htmlUrl="https://www.ribbonfarm.com"/>
+  <outline type="rss" text="Scripting News" xmlUrl="http://scripting.com/rss.xml" htmlUrl="http://scripting.com/"/>
+  <outline type="rss" text="Silberengel" xmlUrl="nostr:nprofile1qqs06gywary09qmcp2249ztwfq3ue8wxhl2yyp3c39thzp55plvj0sgprdmhxue69uhhg6r9vehhyetnwshxummnw3erztnrdakj7qguwaehxw309a6xsetrd96xzer9dshxummnw3erztnrdakj7rjgp95" htmlUrl="https://njump.me/nprofile1qqs06gywary09qmcp2249ztwfq3ue8wxhl2yyp3c39thzp55plvj0sgprdmhxue69uhhg6r9vehhyetnwshxummnw3erztnrdakj7qguwaehxw309a6xsetrd96xzer9dshxummnw3erztnrdakj7rjgp95"/>
+  <outline type="rss" text="The Corbett Report" xmlUrl="https://corbettreport.com/feed/" htmlUrl="https://corbettreport.com/feed/"/>
+  <outline type="rss" text="The Dossier" xmlUrl="https://www.dossier.today/feed" htmlUrl="https://www.dossier.today/feed"/>
+  <outline type="rss" text="tonsky.me" xmlUrl="https://tonsky.me/atom.xml" htmlUrl="https://tonsky.me/"/>
+  <outline type="rss" text="YakiHonne" xmlUrl="nostr:nprofile1qqszpxr0hql8whvk6xyv5hya7yxwd4snur4hu4mg5rctz2ehekkzrvcpzamhxue69uhhyetvv9ujuurvv438xarj9e3k7mgpr9mhxue69uhkummnw3ezu7n9vfjkget99e3kcmm4vsltpn45" htmlUrl="https://njump.me/nprofile1qqszpxr0hql8whvk6xyv5hya7yxwd4snur4hu4mg5rctz2ehekkzrvcpzamhxue69uhhyetvv9ujuurvv438xarj9e3k7mgpr9mhxue69uhkummnw3ezu7n9vfjkget99e3kcmm4vsltpn45"/>
+</body>
+</opml>
