@@ -27,7 +27,7 @@ jobs:
     - name: "Build"
       run: make build_macos
     - name: Upload
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: macos
         path: _output/macos/narr.app
@@ -54,7 +54,7 @@ jobs:
     - name: "Build"
       run: make build_windows
     - name: Upload
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: windows
         path: _output/windows/narr.exe
@@ -81,7 +81,7 @@ jobs:
     - name: "Build"
       run: make build_linux
     - name: Upload
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: linux
         path: _output/linux/narr
