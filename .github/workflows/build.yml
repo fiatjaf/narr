@@ -100,8 +100,8 @@ jobs:
       with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
-          draft: true
-          prerelease: true
+          draft: false
+          prerelease: false
     - name: Download Artifacts
       uses: actions/download-artifact@v4.1.7
       with:
