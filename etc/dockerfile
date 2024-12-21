@@ -8,6 +8,6 @@ FROM alpine:latest
 RUN apk add --no-cache ca-certificates && \
     update-ca-certificates
 COPY --from=build /src/_output/linux/narr /usr/local/bin/narr
-EXPOSE 7070
+EXPOSE 7049
 ENTRYPOINT ["/usr/local/bin/narr"]
-CMD ["-addr", "0.0.0.0:7070", "-db", "/data/narr.db"]
+CMD ["-addr", "0.0.0.0:7049", "-db", "/data/narr.db"]

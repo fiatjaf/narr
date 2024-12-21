@@ -15,7 +15,7 @@ Then run one of the corresponding commands:
     make build_default  # -> _output/narr
 
     # ... or start a dev server locally
-    make serve          # starts a server at http://localhost:7070
+    make serve          # starts a server at http://localhost:7049
 
     # ... or build a docker image
     docker build -t narr -f etc/dockerfile .
