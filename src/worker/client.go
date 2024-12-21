@@ -33,7 +33,7 @@ func (c *Client) getConditional(url, lastModified, etag string) (*http.Response,
 var client *Client
 
 func SetVersion(num string) {
-	client.userAgent = "Narr_/" + num
+	client.userAgent = "Narr/" + num
 }
 
 func init() {
@@ -51,6 +51,6 @@ func init() {
 	}
 	client = &Client{
 		httpClient: httpClient,
-		userAgent:  "Narr_/1.0",
+		userAgent:  "Narr/1.0",
 	}
 }
