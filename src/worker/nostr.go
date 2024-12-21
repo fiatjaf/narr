@@ -8,25 +8,19 @@ import (
 	"strings"
 	"time"
 
-	"github.com/github-tijlxyz/goldmark-nostr"
+	"github.com/fiatjaf/narr/src/parser"
+	extension "github.com/github-tijlxyz/goldmark-nostr"
 	"github.com/nbd-wtf/go-nostr"
 	"github.com/nbd-wtf/go-nostr/nip05"
 	"github.com/nbd-wtf/go-nostr/nip19"
 	"github.com/nbd-wtf/go-nostr/sdk"
-	"github.com/fiatjaf/narr/src/parser"
 	"github.com/yuin/goldmark"
 )
 
-var (
-	nostrSdk *sdk.System
-)
+var nostrSdk *sdk.System
 
 func initializeNostr() {
-	nostrSdk = sdk.NewSystem(
-		sdk.WithRelayListRelays([]string{
-			"wss://nos.lol", "wss://nostr.mom", "wss://nostr.bitcoiner.social", "wss://relay.damus.io", "wss://nostr-pub.wellorder.net"}, // some standard relays
-		),
-	)
+	nostrSdk = sdk.NewSystem()
 }
 
 // Main function for checking if the url is a nostr url
@@ -73,7 +67,6 @@ func discoverNostr(candidateUrl string) (bool, *DiscoverResult) {
 
 	yes, profile := isItNostr(ctx, candidateUrl)
 	if yes {
-
 		nprofile := profile.Nprofile(ctx, nostrSdk, 3)
 
 		// get some feed items

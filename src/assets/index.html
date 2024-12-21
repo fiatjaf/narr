@@ -157,6 +157,7 @@
                                 <span class="icon mr-2" v-if="!feed.has_icon">{% inline "rss.svg" %}</span>
                                 <span class="icon mr-2" v-else><img :src="'./api/feeds/'+feed.id+'/icon'" alt="" loading="lazy"></span>
                                 <span class="flex-fill text-left text-truncate">{{ feed.title }}</span>
+                                <span class="icon mr-2" v-if="feed.feed_link.startsWith('nostr:')"><img src="/static/graphicarts/nostr-bw.png" alt="nostr indicator" class="rounded"></span>
                                 <span class="counter text-right">{{ filteredFeedStats[feed.id] || '' }}</span>
                                 <span class="icon flex-shrink-0 mx-2"
                                       :title="feed_errors[feed.id]"
@@ -372,7 +373,7 @@
                 <p class="cursor-default"><b>New Feed</b></p>
                 <form action="" @submit.prevent="createFeed(event)" class="mt-4">
                     <label for="feed-url">URL</label>
-                    <input id="feed-url" name="url" type="url" class="form-control" required autocomplete="off" :readonly="feedNewChoice.length > 0" placeholder="https://example.com/feed" v-focus>
+                    <input id="feed-url" name="url" type="text" class="form-control" required autocomplete="off" :readonly="feedNewChoice.length > 0" placeholder="https://example.com/feed or nostr:npub1..." v-focus>
                     <label for="feed-folder" class="mt-3 d-block">
                         Folder
                         <a href="#" class="float-right text-decoration-none" @click.prevent="createNewFeedFolder()">new folder</a>
