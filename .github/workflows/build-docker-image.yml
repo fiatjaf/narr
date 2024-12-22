@@ -103,14 +103,14 @@ jobs:
 
       - name: Create and push latest manifest
         run: |
-          docker manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
+          docker manifest create --amend ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:amd64 \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:arm64
           docker manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Create and push SHA manifest manifest
         run: |
-          docker manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+          docker manifest create --amend ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:amd64-${{ github.sha }} \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:arm64-${{ github.sha }}
           docker manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
@@ -119,7 +119,7 @@ jobs:
         if: steps.version.outputs.is_tag == 'true'
         run: |
           # Create version manifest
-          docker manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }} \
+          docker manifest create --amend ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }} \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:amd64-${{ steps.version.outputs.version }} \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:arm64-${{ steps.version.outputs.version }}
           docker manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}
