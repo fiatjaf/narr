@@ -1,0 +1,27 @@
+FROM --platform=linux/arm64 golang:alpine3.21 AS build
+
+# install build dependencies
+RUN apk add --no-cache \
+    build-base \
+    gcc \
+    musl-dev \
+    git
+
+# Copy source code
+WORKDIR /src
+COPY . .
+
+# Build
+RUN GOOS=linux GOARCH=arm64 make build_linux
+
+# Final image
+FROM --platform=linux/arm64 alpine:latest
+RUN apk add --no-cache ca-certificates && \
+    update-ca-certificates
+
+# Copy executable
+COPY --from=build /src/_output/linux/narr /usr/local/bin/narr
+
+EXPOSE 7049
+ENTRYPOINT ["/usr/local/bin/narr"]
+CMD ["-addr", "0.0.0.0:7049", "-db", "/data/narr.db"]

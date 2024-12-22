@@ -1,18 +1,21 @@
-FROM --platform=$BUILDPLATFORM golang:alpine3.21 AS build
+FROM --platform=linux/amd64 golang:alpine3.21 AS build
 
 # install build dependencies
-RUN apk add build-base git
+RUN apk add --no-cache \
+    build-base \
+    gcc \
+    musl-dev \
+    git
 
 # Copy source files
 WORKDIR /src
 COPY . .
 
-# Uses the arguments for cross-compilation
-ARG TARGETOS TARGETARCH
-RUN GOOS=$TARGETOS GOARCH=$TARGETARCH make build_linux
+# Build
+RUN GOOS=linux GOARCH=amd64 make build_linux
 
 # Final image
-FROM alpine:latest
+FROM --platform=linux/amd64 alpine:latest
 RUN apk add --no-cache ca-certificates && \
     update-ca-certificates
 
