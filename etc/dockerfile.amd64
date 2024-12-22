@@ -1,6 +1,6 @@
 FROM --platform=$BUILDPLATFORM golang:1.23-bullseye AS build
 
-# install build dependencies
+# Install build dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     gcc \
