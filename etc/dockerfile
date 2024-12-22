@@ -1,13 +1,24 @@
-FROM golang:alpine3.21 AS build
+FROM --platform=$BUILDPLATFORM golang:alpine3.21 AS build
+
+# install build dependencies
 RUN apk add build-base git
+
+# Copy source files
 WORKDIR /src
 COPY . .
-RUN make build_linux
 
+# Uses the arguments for cross-compilation
+ARG TARGETOS TARGETARCH
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH make build_linux
+
+# Final image
 FROM alpine:latest
 RUN apk add --no-cache ca-certificates && \
     update-ca-certificates
+
+# Copy executable
 COPY --from=build /src/_output/linux/narr /usr/local/bin/narr
+
 EXPOSE 7049
 ENTRYPOINT ["/usr/local/bin/narr"]
 CMD ["-addr", "0.0.0.0:7049", "-db", "/data/narr.db"]
