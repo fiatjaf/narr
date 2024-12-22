@@ -1,26 +1,36 @@
-FROM --platform=linux/amd64 golang:alpine3.21 AS build
+FROM --platform=$BUILDPLATFORM golang:1.23-bullseye AS build
 
 # install build dependencies
-RUN apk add --no-cache \
-    build-base \
+RUN apt-get update && apt-get install -y \
+    build-essential \
     gcc \
-    musl-dev \
-    git
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy source files
 WORKDIR /src
 COPY . .
 
 # Build
-RUN GOOS=linux GOARCH=amd64 make build_linux
+ARG TARGETOS TARGETARCH
+RUN GOOS=$TARGETOS \
+    GOARCH=$TARGETARCH \
+    CGO_CFLAGS="-D_LARGEFILE64_SOURCE" \
+    make build_linux
 
 # Final image
-FROM --platform=linux/amd64 alpine:latest
-RUN apk add --no-cache ca-certificates && \
-    update-ca-certificates
+FROM debian:bullseye-slim
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    ca-certificates && \
+    update-ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy executable
 COPY --from=build /src/_output/linux/narr /usr/local/bin/narr
+
+VOLUME [ "/data" ]
 
 EXPOSE 7049
 ENTRYPOINT ["/usr/local/bin/narr"]
