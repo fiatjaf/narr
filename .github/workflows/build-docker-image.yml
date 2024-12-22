@@ -1,19 +1,33 @@
 name: Publish Docker Image
+
 on:
   push:
-    tags: [ 'v*.*.*', 'v*.*', 'v*', 'latest' ]
+    branches:
+      - "**"
+    tags:
+      - "v*.*.*"
+      - latest
+
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: fiatjaf/narr
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
@@ -34,5 +48,6 @@ jobs:
           context: .
           file: ./etc/dockerfile
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
