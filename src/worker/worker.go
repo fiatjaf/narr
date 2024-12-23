@@ -48,7 +48,8 @@ func (w *Worker) FindFavicons() {
 }
 
 func (w *Worker) FindFeedFavicon(feed storage.Feed) {
-	if nostr, favicon, err := nostrLookForFavicon(feed.FeedLink); nostr && err == nil {
+	if ok, profile := isItNostr(feed.FeedLink); ok {
+		favicon, _ := getIcons([]string{profile.Picture})
 		w.db.UpdateFeedIcon(feed.Id, favicon)
 		return
 	}

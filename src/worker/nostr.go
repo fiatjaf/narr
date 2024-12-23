@@ -1,33 +1,32 @@
 package worker
 
 import (
-	"bytes"
 	"context"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/fiatjaf/narr/src/parser"
-	extension "github.com/github-tijlxyz/goldmark-nostr"
 	"github.com/nbd-wtf/go-nostr"
 	"github.com/nbd-wtf/go-nostr/nip05"
 	"github.com/nbd-wtf/go-nostr/nip19"
+	"github.com/nbd-wtf/go-nostr/nip23"
 	"github.com/nbd-wtf/go-nostr/sdk"
-	"github.com/yuin/goldmark"
+	"github.com/puzpuzpuz/xsync/v3"
 )
 
 var nostrSdk *sdk.System
 
-func initializeNostr() {
+func InitializeNostr() {
 	nostrSdk = sdk.NewSystem()
 }
 
-// Main function for checking if the url is a nostr url
-func isItNostr(ctx context.Context, url string) (bool, *sdk.ProfileMetadata) {
-	if nostrSdk == nil {
-		initializeNostr()
-	}
+func isItNostr(url string) (bool, *sdk.ProfileMetadata) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
 
 	// check for nostr url prefixes
 	if strings.HasPrefix(url, "nostr://") {
@@ -61,16 +60,16 @@ func isItNostr(ctx context.Context, url string) (bool, *sdk.ProfileMetadata) {
 	return false, nil
 }
 
-// Load the feed and items
 func discoverNostr(candidateUrl string) (bool, *DiscoverResult) {
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
 
-	yes, profile := isItNostr(ctx, candidateUrl)
+	yes, profile := isItNostr(candidateUrl)
 	if yes {
 		nprofile := profile.Nprofile(ctx, nostrSdk, 3)
 
 		// get some feed items
-		_, items, err := nostrListItems(candidateUrl)
+		items, err := nostrListItems(profile)
 		if err != nil {
 			items = []parser.Item{}
 		}
@@ -88,81 +87,107 @@ func discoverNostr(candidateUrl string) (bool, *DiscoverResult) {
 	return false, nil
 }
 
-// Load the nostr favicon
-func nostrLookForFavicon(link string) (bool, *[]byte, error) {
-	ctx := context.Background()
-	yes, profile := isItNostr(ctx, link)
-	if yes {
-		favicon, err := getIcons([]string{profile.Picture})
-		return true, favicon, err
+func nostrListItems(profile *sdk.ProfileMetadata) ([]parser.Item, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
 
-	}
-	return false, nil, nil
-}
-
-// Update nostr feed items
-func nostrListItems(f string) (bool, []parser.Item, error) {
-	ctx := context.Background()
-
-	if yes, profile := isItNostr(ctx, f); yes {
-		relays := nostrSdk.FetchOutboxRelays(ctx, profile.PubKey, 3)
-		evchan := nostrSdk.Pool.SubManyEose(ctx, relays, nostr.Filters{
-			{
-				Authors: []string{profile.PubKey},
-				Kinds:   []int{nostr.KindArticle},
-				Limit:   32,
-			},
-		})
-		feedItems := []parser.Item{}
-		for event := range evchan {
-
-			publishedAt := event.CreatedAt.Time()
-			if publishedAtTag := event.Tags.GetFirst([]string{"published_at"}); publishedAtTag != nil && len(*publishedAtTag) >= 2 {
-				i, err := strconv.ParseInt((*publishedAtTag)[1], 10, 64)
-				if err != nil {
-					publishedAt = time.Unix(i, 0)
-				}
-			}
-
-			naddr, err := nip19.EncodeEntity(event.PubKey, event.Kind, event.Tags.GetD(), relays)
+	relays := nostrSdk.FetchOutboxRelays(ctx, profile.PubKey, 3)
+	evchan := nostrSdk.Pool.SubManyEose(ctx, relays, nostr.Filters{
+		{
+			Authors: []string{profile.PubKey},
+			Kinds:   []int{nostr.KindArticle},
+			Limit:   32,
+		},
+	})
+	feedItems := []parser.Item{}
+	for event := range evchan {
+		publishedAt := event.CreatedAt.Time()
+		if paTag := event.Tags.GetFirst([]string{"published_at", ""}); paTag != nil && len(*paTag) >= 2 {
+			i, err := strconv.ParseInt((*paTag)[1], 10, 64)
 			if err != nil {
-				continue
+				publishedAt = time.Unix(i, 0)
 			}
-
-			title := ""
-			titleTag := event.Tags.GetFirst([]string{"title"})
-			if titleTag != nil && len(*titleTag) >= 2 {
-				title = (*titleTag)[1]
-			} else {
-				continue
-			}
-
-			image := ""
-			imageTag := event.Tags.GetFirst([]string{"image"})
-			if imageTag != nil && len(*imageTag) >= 2 {
-				image = (*imageTag)[1]
-			}
-
-			// format content from markdown to html
-			md := goldmark.New(goldmark.WithExtensions(extension.New(extension.WithStrict(), extension.WithNostrLink("https://njump.me/%s"))))
-			var buf bytes.Buffer
-			if err := md.Convert([]byte(event.Content), &buf); err != nil {
-				continue
-			}
-
-			feedItems = append(feedItems, parser.Item{
-				GUID:     fmt.Sprintf("nostr:%s:%s", event.PubKey, event.Tags.GetD()),
-				Date:     publishedAt,
-				URL:      fmt.Sprintf("https://njump.me/%s", naddr),
-				Content:  buf.String(),
-				Title:    title,
-				ImageURL: image,
-			})
-
 		}
 
-		return true, feedItems, nil
+		naddr, err := nip19.EncodeEntity(event.PubKey, event.Kind, event.Tags.GetD(), relays)
+		if err != nil {
+			continue
+		}
+
+		title := ""
+		titleTag := event.Tags.GetFirst([]string{"title", ""})
+		if titleTag != nil && len(*titleTag) >= 2 {
+			title = (*titleTag)[1]
+		} else {
+			continue
+		}
+
+		image := ""
+		imageTag := event.Tags.GetFirst([]string{"image", ""})
+		if imageTag != nil && len(*imageTag) >= 2 {
+			image = (*imageTag)[1]
+		}
+
+		// format content from markdown to html
+		htmlContent := replaceNostrURLsWithHTMLTags(nip23.MarkdownToHTML(event.Content))
+
+		feedItems = append(feedItems, parser.Item{
+			GUID:     fmt.Sprintf("nostr:%s:%s", event.PubKey, event.Tags.GetD()),
+			Date:     publishedAt,
+			URL:      fmt.Sprintf("https://njump.me/%s", naddr),
+			Content:  htmlContent,
+			Title:    title,
+			ImageURL: image,
+		})
+
 	}
 
-	return false, nil, nil
+	return feedItems, nil
+}
+
+var nostrEveryMatcher = regexp.MustCompile(`nostr:((npub|note|nevent|nprofile|naddr)1[a-z0-9]+)\b`)
+
+func replaceNostrURLsWithHTMLTags(input string) string {
+	// match and replace npup1, nprofile1, note1, nevent1, etc
+	names := xsync.NewMapOf[string, string]()
+	wg := sync.WaitGroup{}
+
+	// first we run it without waiting for the results of getNameFromNip19() as they will be async
+	for _, match := range nostrEveryMatcher.FindAllString(input, len(input)+1) {
+		nip19 := match[len("nostr:"):]
+
+		if strings.HasPrefix(nip19, "npub1") || strings.HasPrefix(nip19, "nprofile1") {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second*4)
+			defer cancel()
+			wg.Add(1)
+			go func() {
+				name, _ := getNameFromNip19(ctx, nip19)
+				names.Store(nip19, name)
+				wg.Done()
+			}()
+		}
+	}
+
+	// in the second time now that we got all the names we actually perform replacement
+	wg.Wait()
+	return nostrEveryMatcher.ReplaceAllStringFunc(input, func(match string) string {
+		nip19 := match[len("nostr:"):]
+		firstChars := nip19[:8]
+		lastChars := nip19[len(nip19)-4:]
+
+		if strings.HasPrefix(nip19, "npub1") || strings.HasPrefix(nip19, "nprofile1") {
+			name, _ := names.Load(nip19)
+			return fmt.Sprintf(`<a href="https://njump.me/%s">%s (%s)</a>`, nip19, name, firstChars+"…"+lastChars)
+		} else {
+			return fmt.Sprintf(`<a href="https://njump.me/%s">%s</a>`, nip19, firstChars+"…"+lastChars)
+		}
+	})
+}
+
+func getNameFromNip19(ctx context.Context, nip19code string) (string, bool) {
+	metadata, _ := nostrSdk.FetchProfileFromInput(ctx, nip19code)
+	if metadata.Name == "" {
+		return nip19code, false
+	}
+	return metadata.Name, true
 }

@@ -16,8 +16,10 @@ import (
 	"github.com/fiatjaf/narr/src/worker"
 )
 
-var Version string = "0.0"
-var GitHash string = "unknown"
+var (
+	Version string = "0.0"
+	GitHash string = "unknown"
+)
 
 var OptList = make([]string, 0)
 
@@ -149,6 +151,9 @@ func main() {
 		srv.Username = username
 		srv.Password = password
 	}
+
+	log.Printf("initializing nostr")
+	worker.InitializeNostr()
 
 	log.Printf("starting server at %s", srv.GetAddr())
 	if open {
