@@ -16,10 +16,7 @@ import (
 	"github.com/fiatjaf/narr/src/worker"
 )
 
-var (
-	Version string = "0.0"
-	GitHash string = "unknown"
-)
+var Version string = "0.0.0-manual"
 
 var OptList = make([]string, 0)
 
@@ -76,7 +73,7 @@ func main() {
 	flag.Parse()
 
 	if ver {
-		fmt.Printf("v%s (%s)\n", Version, GitHash)
+		fmt.Printf("%s\n", Version)
 		return
 	}
 

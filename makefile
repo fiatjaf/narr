@@ -1,7 +1,6 @@
-VERSION=2.4
-GITHASH=$(shell git rev-parse --short=8 HEAD)
+VERSION=$(shell git describe --tags | sed 's/^.\(.*\)/\1/')
 
-GO_LDFLAGS = -s -w -X 'main.Version=$(VERSION)' -X 'main.GitHash=$(GITHASH)'
+GO_LDFLAGS = -s -w -X 'main.Version=$(VERSION)'
 
 export GOARCH      ?= amd64
 export CGO_ENABLED  = 1
@@ -28,6 +27,9 @@ build_windows:
 
 serve:
 	go run -tags "sqlite_foreign_keys sqlite_math_functions" ./cmd/narr -db local.db
+
+install:
+	go install -tags "sqlite_foreign_keys sqlite_math_functions" ./cmd/narr
 
 test:
 	go test -tags "sqlite_foreign_keys sqlite_math_functions" ./...

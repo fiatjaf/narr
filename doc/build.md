@@ -1,6 +1,6 @@
 ## Compilation
 
-Install `Go >= 1.17` and `GCC`. Get the source code:
+Install `Go >= 1.23`, then get the source code:
 
     git clone https://github.com/fiatjaf/narr.git
 
