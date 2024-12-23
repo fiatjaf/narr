@@ -178,7 +178,8 @@ func ConvertItems(items []parser.Item, feed storage.Feed) []storage.Item {
 }
 
 func listItems(f storage.Feed, db *storage.Storage) ([]storage.Item, error) {
-	if nostr, feedItems, err := nostrListItems(f.FeedLink); nostr {
+	if isNostr, profile := isItNostr(f.FeedLink); isNostr {
+		feedItems, err := nostrListItems(profile)
 		return ConvertItems(feedItems, f), err
 	}
 
