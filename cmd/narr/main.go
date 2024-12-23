@@ -130,7 +130,7 @@ func main() {
 		log.Fatalf("Both cert & key files are required")
 	}
 
-	store, err := storage.New(db)
+	store, sqlitedb, err := storage.New(db)
 	if err != nil {
 		log.Fatal("Failed to initialise database: ", err)
 	}
@@ -153,7 +153,7 @@ func main() {
 	}
 
 	log.Printf("initializing nostr")
-	worker.InitializeNostr()
+	worker.InitializeNostr(sqlitedb)
 
 	log.Printf("starting server at %s", srv.GetAddr())
 	if open {

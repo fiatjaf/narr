@@ -2,6 +2,7 @@ package worker
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -10,18 +11,29 @@ import (
 	"time"
 
 	"github.com/fiatjaf/narr/src/parser"
+	"github.com/jmoiron/sqlx"
 	"github.com/nbd-wtf/go-nostr"
 	"github.com/nbd-wtf/go-nostr/nip05"
 	"github.com/nbd-wtf/go-nostr/nip19"
 	"github.com/nbd-wtf/go-nostr/nip23"
 	"github.com/nbd-wtf/go-nostr/sdk"
+	"github.com/nbd-wtf/go-nostr/sdk/hints/sqlite"
 	"github.com/puzpuzpuz/xsync/v3"
 )
 
 var nostrSdk *sdk.System
 
-func InitializeNostr() {
-	nostrSdk = sdk.NewSystem()
+func InitializeNostr(db *sql.DB) error {
+	hdb, err := sqlite.NewSQLiteHints(sqlx.NewDb(db, "sqlite"))
+	if err != nil {
+		return err
+	}
+
+	nostrSdk = sdk.NewSystem(
+		sdk.WithHintsDB(hdb),
+	)
+
+	return nil
 }
 
 func isItNostr(url string) (bool, *sdk.ProfileMetadata) {

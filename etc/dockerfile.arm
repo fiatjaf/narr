@@ -28,7 +28,7 @@ RUN env \
         CGO_ENABLED=1 \
         GOOS=linux GOARCH=arm64 \
     go build \
-        -tags "sqlite_foreign_keys linux" \
+        -tags "sqlite_foreign_keys sqlite_math_functions linux" \
         -ldflags="-s -w" \
         -o /root/out/narr.arm64 ./cmd/narr
 
@@ -37,7 +37,7 @@ RUN env \
         CGO_ENABLED=1 \
         GOOS=linux GOARCH=arm GOARM=7 \
     go build \
-        -tags "sqlite_foreign_keys linux" \
+        -tags "sqlite_foreign_keys sqlite_math_functions linux" \
         -ldflags="-s -w" \
         -o /root/out/narr.arm7 ./cmd/narr
 

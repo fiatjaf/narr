@@ -3,6 +3,7 @@ module github.com/fiatjaf/narr
 go 1.23.3
 
 require (
+	github.com/jmoiron/sqlx v1.3.5
 	github.com/mattn/go-sqlite3 v1.14.18
 	github.com/nbd-wtf/go-nostr v0.44.2
 	github.com/puzpuzpuz/xsync/v3 v3.4.0
