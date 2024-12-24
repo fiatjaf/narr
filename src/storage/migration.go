@@ -17,6 +17,7 @@ var migrations = []func(*sql.Tx) error{
 	m07_add_feed_size,
 	m08_normalize_datetime,
 	m09_change_item_index,
+	m10_make_it_so_items_can_be_modified,
 }
 
 var maxVersion = int64(len(migrations))
@@ -302,6 +303,15 @@ func m09_change_item_index(tx *sql.Tx) error {
 	sql := `
         drop index if exists idx_item_status;
 		create index if not exists idx_item__date_id_status on items(date,id,status);
+	`
+	_, err := tx.Exec(sql)
+	return err
+}
+
+func m10_make_it_so_items_can_be_modified(tx *sql.Tx) error {
+	sql := `
+		alter table feeds add column was_manually_edited bool not null default false;
+		alter table items add column last_updated datetime;
 	`
 	_, err := tx.Exec(sql)
 	return err

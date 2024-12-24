@@ -45,16 +45,17 @@ func (s *ItemStatus) UnmarshalJSON(b []byte) error {
 }
 
 type Item struct {
-	Id       int64      `json:"id"`
-	GUID     string     `json:"guid"`
-	FeedId   int64      `json:"feed_id"`
-	Title    string     `json:"title"`
-	Link     string     `json:"link"`
-	Content  string     `json:"content,omitempty"`
-	Date     time.Time  `json:"date"`
-	Status   ItemStatus `json:"status"`
-	ImageURL *string    `json:"image"`
-	AudioURL *string    `json:"podcast_url"`
+	Id          int64      `json:"id"`
+	GUID        string     `json:"guid"`
+	FeedId      int64      `json:"feed_id"`
+	Title       string     `json:"title"`
+	Link        string     `json:"link"`
+	Content     string     `json:"content,omitempty"`
+	Date        time.Time  `json:"date"`
+	LastUpdated *time.Time `json:"last_updated"`
+	Status      ItemStatus `json:"status"`
+	ImageURL    *string    `json:"image"`
+	AudioURL    *string    `json:"podcast_url"`
 }
 
 type ItemFilter struct {
@@ -107,15 +108,20 @@ func (s *Storage) CreateItems(items []Item) bool {
 	sort.Sort(itemsSorted)
 
 	for _, item := range itemsSorted {
-		_, err = tx.Exec(`
+		onConflict := "do nothing"
+		if item.LastUpdated != nil {
+			onConflict = "do update set title = excluded.title, content = excluded.content, image = excluded.image, podcast_url = excluded.podcast_url, last_updated = excluded.last_updated where items.last_updated IS NULL OR items.last_updated < excluded.last_updated"
+		}
+
+		_, err := tx.Exec(`
 			insert into items (
-				guid, feed_id, title, link, date,
+				guid, feed_id, title, link, date, last_updated,
 				content, image, podcast_url,
 				date_arrived, status
 			)
-			values (?, ?, ?, ?, strftime('%Y-%m-%d %H:%M:%f', ?), ?, ?, ?, ?, ?)
-			on conflict (feed_id, guid) do nothing`,
-			item.GUID, item.FeedId, item.Title, item.Link, item.Date,
+			values (?, ?, ?, ?, strftime('%Y-%m-%d %H:%M:%f', ?), strftime('%Y-%m-%d %H:%M:%f', ?), ?, ?, ?, ?, ?)
+			on conflict (feed_id, guid) `+onConflict,
+			item.GUID, item.FeedId, item.Title, item.Link, item.Date, item.LastUpdated,
 			item.Content, item.ImageURL, item.AudioURL,
 			now, UNREAD,
 		)

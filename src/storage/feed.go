@@ -6,14 +6,15 @@ import (
 )
 
 type Feed struct {
-	Id          int64   `json:"id"`
-	FolderId    *int64  `json:"folder_id"`
-	Title       string  `json:"title"`
-	Description string  `json:"description"`
-	Link        string  `json:"link"`
-	FeedLink    string  `json:"feed_link"`
-	Icon        *[]byte `json:"icon,omitempty"`
-	HasIcon     bool    `json:"has_icon"`
+	Id                int64   `json:"id"`
+	FolderId          *int64  `json:"folder_id"`
+	Title             string  `json:"title"`
+	Description       string  `json:"description"`
+	Link              string  `json:"link"`
+	FeedLink          string  `json:"feed_link"`
+	Icon              *[]byte `json:"icon,omitempty"`
+	HasIcon           bool    `json:"has_icon"`
+	WasManuallyEdited bool    `json:"was_manually_edited"`
 }
 
 func (s *Storage) CreateFeed(title, description, link, feedLink string, folderId *int64) *Feed {
@@ -61,8 +62,8 @@ func (s *Storage) DeleteFeed(feedId int64) bool {
 	return nrows == 1
 }
 
-func (s *Storage) RenameFeed(feedId int64, newTitle string) bool {
-	_, err := s.db.Exec(`update feeds set title = ? where id = ?`, newTitle, feedId)
+func (s *Storage) RenameFeed(feedId int64, newTitle string, manual bool) bool {
+	_, err := s.db.Exec(`update feeds set title = ?, was_manually_edited = ? where id = ?`, newTitle, manual, feedId)
 	return err == nil
 }
 
@@ -77,14 +78,14 @@ func (s *Storage) UpdateFeedLink(feedId int64, newLink string) bool {
 }
 
 func (s *Storage) UpdateFeedIcon(feedId int64, icon *[]byte) bool {
-	_, err := s.db.Exec(`update feeds set icon = ? where id = ?`, icon, feedId)
+	_, err := s.db.Exec(`update feeds set icon = ?, was_manually_edited = true where id = ?`, icon, feedId)
 	return err == nil
 }
 
 func (s *Storage) ListFeeds() []Feed {
 	result := make([]Feed, 0)
 	rows, err := s.db.Query(`
-		select id, folder_id, title, description, link, feed_link,
+		select id, folder_id, title, description, link, feed_link, was_manually_edited,
 		       ifnull(length(icon), 0) > 0 as has_icon
 		from feeds
 		order by title collate nocase
@@ -102,6 +103,7 @@ func (s *Storage) ListFeeds() []Feed {
 			&f.Description,
 			&f.Link,
 			&f.FeedLink,
+			&f.WasManuallyEdited,
 			&f.HasIcon,
 		)
 		if err != nil {
@@ -147,11 +149,11 @@ func (s *Storage) GetFeed(id int64) *Feed {
 	var f Feed
 	err := s.db.QueryRow(`
 		select
-			id, folder_id, title, link, feed_link,
+			id, folder_id, title, link, feed_link, was_manually_edited,
 			icon, ifnull(icon, '') != '' as has_icon
 		from feeds where id = ?
 	`, id).Scan(
-		&f.Id, &f.FolderId, &f.Title, &f.Link, &f.FeedLink,
+		&f.Id, &f.FolderId, &f.Title, &f.Link, &f.FeedLink, &f.WasManuallyEdited,
 		&f.Icon, &f.HasIcon,
 	)
 	if err != nil {

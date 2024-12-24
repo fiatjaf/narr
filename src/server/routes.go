@@ -291,7 +291,7 @@ func (s *Server) handleFeed(c *router.Context) {
 		}
 		if title, ok := body["title"]; ok {
 			if reflect.TypeOf(title).Kind() == reflect.String {
-				s.db.RenameFeed(id, title.(string))
+				s.db.RenameFeed(id, title.(string), true)
 			}
 		}
 		if f_id, ok := body["folder_id"]; ok {

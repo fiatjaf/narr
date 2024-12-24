@@ -112,11 +112,17 @@ func nostrListItems(profile *sdk.ProfileMetadata) ([]parser.Item, error) {
 	})
 	feedItems := []parser.Item{}
 	for event := range evchan {
-		publishedAt := event.CreatedAt.Time()
+		eventTime := event.CreatedAt.Time()
+		publishedAt := eventTime
+		var lastUpdated *time.Time
+
 		if paTag := event.Tags.GetFirst([]string{"published_at", ""}); paTag != nil && len(*paTag) >= 2 {
 			i, err := strconv.ParseInt((*paTag)[1], 10, 64)
-			if err != nil {
+			if err == nil {
 				publishedAt = time.Unix(i, 0)
+				if publishedAt.Compare(eventTime) != 0 {
+					lastUpdated = &eventTime
+				}
 			}
 		}
 
@@ -139,16 +145,16 @@ func nostrListItems(profile *sdk.ProfileMetadata) ([]parser.Item, error) {
 			image = (*imageTag)[1]
 		}
 
-		// format content from markdown to html
 		htmlContent := replaceNostrURLsWithHTMLTags(nip23.MarkdownToHTML(event.Content))
 
 		feedItems = append(feedItems, parser.Item{
-			GUID:     fmt.Sprintf("nostr:%s:%s", event.PubKey, event.Tags.GetD()),
-			Date:     publishedAt,
-			URL:      fmt.Sprintf("https://njump.me/%s", naddr),
-			Content:  htmlContent,
-			Title:    title,
-			ImageURL: image,
+			GUID:        fmt.Sprintf("nostr:%s:%s", event.PubKey, event.Tags.GetD()),
+			Date:        publishedAt,
+			LastUpdated: lastUpdated,
+			URL:         fmt.Sprintf("https://njump.me/%s", naddr),
+			Content:     htmlContent,
+			Title:       title,
+			ImageURL:    image,
 		})
 
 	}

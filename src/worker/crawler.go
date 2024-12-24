@@ -153,7 +153,6 @@ func getIcons(urls []string) (*[]byte, error) {
 func ConvertItems(items []parser.Item, feed storage.Feed) []storage.Item {
 	result := make([]storage.Item, len(items))
 	for i, item := range items {
-		item := item
 		var audioURL *string = nil
 		if item.AudioURL != "" {
 			audioURL = &item.AudioURL
@@ -163,24 +162,25 @@ func ConvertItems(items []parser.Item, feed storage.Feed) []storage.Item {
 			imageURL = &item.ImageURL
 		}
 		result[i] = storage.Item{
-			GUID:     item.GUID,
-			FeedId:   feed.Id,
-			Title:    item.Title,
-			Link:     item.URL,
-			Content:  item.Content,
-			Date:     item.Date,
-			Status:   storage.UNREAD,
-			ImageURL: imageURL,
-			AudioURL: audioURL,
+			GUID:        item.GUID,
+			FeedId:      feed.Id,
+			Title:       item.Title,
+			Link:        item.URL,
+			Content:     item.Content,
+			Date:        item.Date,
+			LastUpdated: item.LastUpdated,
+			Status:      storage.UNREAD,
+			ImageURL:    imageURL,
+			AudioURL:    audioURL,
 		}
 	}
 	return result
 }
 
-func listItems(f storage.Feed, db *storage.Storage) ([]storage.Item, error) {
+func reload(f storage.Feed, db *storage.Storage) (string, []storage.Item, error) {
 	if isNostr, profile := isItNostr(f.FeedLink); isNostr {
 		feedItems, err := nostrListItems(profile)
-		return ConvertItems(feedItems, f), err
+		return profile.Name, ConvertItems(feedItems, f), err
 	}
 
 	lmod := ""
@@ -192,23 +192,23 @@ func listItems(f storage.Feed, db *storage.Storage) ([]storage.Item, error) {
 
 	res, err := client.getConditional(f.FeedLink, lmod, etag)
 	if err != nil {
-		return nil, err
+		return "", nil, err
 	}
 	defer res.Body.Close()
 
 	switch {
 	case res.StatusCode < 200 || res.StatusCode > 399:
 		if res.StatusCode == 404 {
-			return nil, fmt.Errorf("feed not found")
+			return "", nil, fmt.Errorf("feed not found")
 		}
-		return nil, fmt.Errorf("status code %d", res.StatusCode)
+		return "", nil, fmt.Errorf("status code %d", res.StatusCode)
 	case res.StatusCode == http.StatusNotModified:
-		return nil, nil
+		return "", nil, nil
 	}
 
 	feed, err := parser.ParseAndFix(res.Body, f.FeedLink, getCharset(res))
 	if err != nil {
-		return nil, err
+		return "", nil, err
 	}
 
 	lmod = res.Header.Get("Last-Modified")
@@ -216,7 +216,7 @@ func listItems(f storage.Feed, db *storage.Storage) ([]storage.Item, error) {
 	if lmod != "" || etag != "" {
 		db.SetHTTPState(f.Id, lmod, etag)
 	}
-	return ConvertItems(feed.Items, f), nil
+	return feed.Title, ConvertItems(feed.Items, f), nil
 }
 
 func getCharset(res *http.Response) string {
