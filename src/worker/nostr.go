@@ -11,20 +11,19 @@ import (
 	"time"
 
 	"github.com/fiatjaf/narr/src/parser"
-	"github.com/jmoiron/sqlx"
 	"github.com/nbd-wtf/go-nostr"
 	"github.com/nbd-wtf/go-nostr/nip05"
 	"github.com/nbd-wtf/go-nostr/nip19"
 	"github.com/nbd-wtf/go-nostr/nip23"
 	"github.com/nbd-wtf/go-nostr/sdk"
-	"github.com/nbd-wtf/go-nostr/sdk/hints/sqlite"
+	"github.com/nbd-wtf/go-nostr/sdk/hints/sqlh"
 	"github.com/puzpuzpuz/xsync/v3"
 )
 
 var nostrSdk *sdk.System
 
 func InitializeNostr(db *sql.DB) error {
-	hdb, err := sqlite.NewSQLiteHints(sqlx.NewDb(db, "sqlite"))
+	hdb, err := sqlh.NewSQLHints(db, "sqlite3")
 	if err != nil {
 		return err
 	}
