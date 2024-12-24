@@ -164,7 +164,7 @@ func replaceNostrURLsWithHTMLTags(input string) string {
 	names := xsync.NewMapOf[string, string]()
 	wg := sync.WaitGroup{}
 
-	// first we run it without waiting for the results of getNameFromNip19() as they will be async
+	// first we run it without waiting for the results of getting the name as they will be async
 	for _, match := range nostrEveryMatcher.FindAllString(input, len(input)+1) {
 		nip19 := match[len("nostr:"):]
 
@@ -173,8 +173,10 @@ func replaceNostrURLsWithHTMLTags(input string) string {
 			defer cancel()
 			wg.Add(1)
 			go func() {
-				name, _ := getNameFromNip19(ctx, nip19)
-				names.Store(nip19, name)
+				metadata, _ := nostrSdk.FetchProfileFromInput(ctx, nip19)
+				if metadata.Name != "" {
+					names.Store(nip19, metadata.Name)
+				}
 				wg.Done()
 			}()
 		}
@@ -189,17 +191,13 @@ func replaceNostrURLsWithHTMLTags(input string) string {
 
 		if strings.HasPrefix(nip19, "npub1") || strings.HasPrefix(nip19, "nprofile1") {
 			name, _ := names.Load(nip19)
-			return fmt.Sprintf(`<a href="https://njump.me/%s">%s (%s)</a>`, nip19, name, firstChars+"…"+lastChars)
+			if name != "" {
+				return fmt.Sprintf(`<a href="https://njump.me/%s">%s (%s…%s)</a>`, nip19, name, firstChars, lastChars)
+			} else {
+				return fmt.Sprintf(`<a href="https://njump.me/%s">%s…%s</a>`, nip19, firstChars, lastChars)
+			}
 		} else {
-			return fmt.Sprintf(`<a href="https://njump.me/%s">%s</a>`, nip19, firstChars+"…"+lastChars)
+			return fmt.Sprintf(`<a href="https://njump.me/%s">%s…%s</a>`, nip19, firstChars, lastChars)
 		}
 	})
-}
-
-func getNameFromNip19(ctx context.Context, nip19code string) (string, bool) {
-	metadata, _ := nostrSdk.FetchProfileFromInput(ctx, nip19code)
-	if metadata.Name == "" {
-		return nip19code, false
-	}
-	return metadata.Name, true
 }
