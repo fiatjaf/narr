@@ -7,15 +7,15 @@ import (
 )
 
 var rsrc = `1 VERSIONINFO
-FILEVERSION     {VERSION_COMMA},0,0
-PRODUCTVERSION  {VERSION_COMMA},0,0
+FILEVERSION     {VERSION_COMMA},0
+PRODUCTVERSION  {VERSION_COMMA},0
 BEGIN
   BLOCK "StringFileInfo"
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "Old MacDonald's Farm"
-      VALUE "FileDescription", "Yet another RSS reader"
+      VALUE "CompanyName", "Tabajara Inc"
+      VALUE "FileDescription", "Not another RSS reader"
       VALUE "FileVersion", "{VERSION}"
       VALUE "InternalName", "narr"
       VALUE "LegalCopyright", "fiatjaf"
@@ -35,7 +35,7 @@ END
 
 func main() {
 	var version, outfile string
-	flag.StringVar(&version, "version", "0.0", "")
+	flag.StringVar(&version, "version", "0.0.0", "")
 	flag.StringVar(&outfile, "outfile", "versioninfo.rc", "")
 	flag.Parse()
 
