@@ -107,7 +107,7 @@ func nostrListItems(profile *sdk.ProfileMetadata) ([]parser.Item, error) {
 		{
 			Authors: []string{profile.PubKey},
 			Kinds:   []int{nostr.KindArticle},
-			Limit:   32,
+			Limit:   300,
 		},
 	})
 	feedItems := []parser.Item{}
