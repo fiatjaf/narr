@@ -232,7 +232,8 @@ func (s *Server) handleFeedList(c *router.Context) {
 
 		// normalize URL
 		form.Url = strings.TrimSpace(form.Url)
-		if strings.HasPrefix(form.Url, "npub1") || strings.HasPrefix(form.Url, "nprofile1") || strings.Contains(form.Url, "@") {
+		if strings.HasPrefix(form.Url, "npub1") || strings.HasPrefix(form.Url, "nprofile1") ||
+			(strings.Contains(form.Url, "@") && !strings.HasPrefix(form.Url, "nostr:")) {
 			form.Url = "nostr:" + form.Url
 		} else if !strings.HasPrefix(form.Url, "nostr:") && !strings.HasPrefix(form.Url, "http") {
 			form.Url = "https://" + form.Url
