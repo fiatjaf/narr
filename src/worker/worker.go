@@ -72,7 +72,7 @@ func (w *Worker) SetRefreshRate(minute int64) {
 	}
 
 	if minute == 0 {
-		return
+		minute = 60
 	}
 
 	w.stopper = make(chan bool)
@@ -126,6 +126,7 @@ func (w *Worker) refresher(feeds []storage.Feed) {
 	for _, feed := range feeds {
 		srcqueue <- feed
 	}
+
 	for i := 0; i < len(feeds); i++ {
 		items := <-dstqueue
 		if len(items) > 0 {
@@ -143,10 +144,13 @@ func (w *Worker) refresher(feeds []storage.Feed) {
 
 func (w *Worker) worker(srcqueue <-chan storage.Feed, dstqueue chan<- []storage.Item) {
 	for feed := range srcqueue {
-		items, err := listItems(feed, w.db)
+		newTitle, items, err := reload(feed, w.db)
 		if err != nil {
 			w.db.SetFeedError(feed.Id, err)
 		}
 		dstqueue <- items
+		if !feed.WasManuallyEdited && newTitle != "" {
+			w.db.RenameFeed(feed.Id, newTitle, false)
+		}
 	}
 }

@@ -11,20 +11,19 @@ import (
 	"time"
 
 	"github.com/fiatjaf/narr/src/parser"
-	"github.com/jmoiron/sqlx"
 	"github.com/nbd-wtf/go-nostr"
 	"github.com/nbd-wtf/go-nostr/nip05"
 	"github.com/nbd-wtf/go-nostr/nip19"
 	"github.com/nbd-wtf/go-nostr/nip23"
 	"github.com/nbd-wtf/go-nostr/sdk"
-	"github.com/nbd-wtf/go-nostr/sdk/hints/sqlite"
+	"github.com/nbd-wtf/go-nostr/sdk/hints/sqlh"
 	"github.com/puzpuzpuz/xsync/v3"
 )
 
 var nostrSdk *sdk.System
 
 func InitializeNostr(db *sql.DB) error {
-	hdb, err := sqlite.NewSQLiteHints(sqlx.NewDb(db, "sqlite"))
+	hdb, err := sqlh.NewSQLHints(db, "sqlite3")
 	if err != nil {
 		return err
 	}
@@ -108,16 +107,22 @@ func nostrListItems(profile *sdk.ProfileMetadata) ([]parser.Item, error) {
 		{
 			Authors: []string{profile.PubKey},
 			Kinds:   []int{nostr.KindArticle},
-			Limit:   32,
+			Limit:   300,
 		},
 	})
 	feedItems := []parser.Item{}
 	for event := range evchan {
-		publishedAt := event.CreatedAt.Time()
+		eventTime := event.CreatedAt.Time()
+		publishedAt := eventTime
+		var lastUpdated *time.Time
+
 		if paTag := event.Tags.GetFirst([]string{"published_at", ""}); paTag != nil && len(*paTag) >= 2 {
 			i, err := strconv.ParseInt((*paTag)[1], 10, 64)
-			if err != nil {
+			if err == nil {
 				publishedAt = time.Unix(i, 0)
+				if publishedAt.Compare(eventTime) != 0 {
+					lastUpdated = &eventTime
+				}
 			}
 		}
 
@@ -140,16 +145,16 @@ func nostrListItems(profile *sdk.ProfileMetadata) ([]parser.Item, error) {
 			image = (*imageTag)[1]
 		}
 
-		// format content from markdown to html
 		htmlContent := replaceNostrURLsWithHTMLTags(nip23.MarkdownToHTML(event.Content))
 
 		feedItems = append(feedItems, parser.Item{
-			GUID:     fmt.Sprintf("nostr:%s:%s", event.PubKey, event.Tags.GetD()),
-			Date:     publishedAt,
-			URL:      fmt.Sprintf("https://njump.me/%s", naddr),
-			Content:  htmlContent,
-			Title:    title,
-			ImageURL: image,
+			GUID:        fmt.Sprintf("nostr:%s:%s", event.PubKey, event.Tags.GetD()),
+			Date:        publishedAt,
+			LastUpdated: lastUpdated,
+			URL:         fmt.Sprintf("https://njump.me/%s", naddr),
+			Content:     htmlContent,
+			Title:       title,
+			ImageURL:    image,
 		})
 
 	}
@@ -164,7 +169,7 @@ func replaceNostrURLsWithHTMLTags(input string) string {
 	names := xsync.NewMapOf[string, string]()
 	wg := sync.WaitGroup{}
 
-	// first we run it without waiting for the results of getNameFromNip19() as they will be async
+	// first we run it without waiting for the results of getting the name as they will be async
 	for _, match := range nostrEveryMatcher.FindAllString(input, len(input)+1) {
 		nip19 := match[len("nostr:"):]
 
@@ -173,8 +178,10 @@ func replaceNostrURLsWithHTMLTags(input string) string {
 			defer cancel()
 			wg.Add(1)
 			go func() {
-				name, _ := getNameFromNip19(ctx, nip19)
-				names.Store(nip19, name)
+				metadata, _ := nostrSdk.FetchProfileFromInput(ctx, nip19)
+				if metadata.Name != "" {
+					names.Store(nip19, metadata.Name)
+				}
 				wg.Done()
 			}()
 		}
@@ -189,17 +196,13 @@ func replaceNostrURLsWithHTMLTags(input string) string {
 
 		if strings.HasPrefix(nip19, "npub1") || strings.HasPrefix(nip19, "nprofile1") {
 			name, _ := names.Load(nip19)
-			return fmt.Sprintf(`<a href="https://njump.me/%s">%s (%s)</a>`, nip19, name, firstChars+"…"+lastChars)
+			if name != "" {
+				return fmt.Sprintf(`<a href="https://njump.me/%s">%s (%s…%s)</a>`, nip19, name, firstChars, lastChars)
+			} else {
+				return fmt.Sprintf(`<a href="https://njump.me/%s">%s…%s</a>`, nip19, firstChars, lastChars)
+			}
 		} else {
-			return fmt.Sprintf(`<a href="https://njump.me/%s">%s</a>`, nip19, firstChars+"…"+lastChars)
+			return fmt.Sprintf(`<a href="https://njump.me/%s">%s…%s</a>`, nip19, firstChars, lastChars)
 		}
 	})
-}
-
-func getNameFromNip19(ctx context.Context, nip19code string) (string, bool) {
-	metadata, _ := nostrSdk.FetchProfileFromInput(ctx, nip19code)
-	if metadata.Name == "" {
-		return nip19code, false
-	}
-	return metadata.Name, true
 }

@@ -3,9 +3,8 @@ module github.com/fiatjaf/narr
 go 1.23.3
 
 require (
-	github.com/jmoiron/sqlx v1.3.5
 	github.com/mattn/go-sqlite3 v1.14.18
-	github.com/nbd-wtf/go-nostr v0.44.2
+	github.com/nbd-wtf/go-nostr v0.45.0
 	github.com/puzpuzpuz/xsync/v3 v3.4.0
 	golang.org/x/net v0.26.0
 	golang.org/x/sys v0.28.0
@@ -28,6 +27,7 @@ require (
 	github.com/gomarkdown/markdown v0.0.0-20241205020045-f7e15b2f3e62 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/graph-gophers/dataloader/v7 v7.1.0 // indirect
+	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/mailru/easyjson v0.9.0 // indirect

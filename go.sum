@@ -101,8 +101,8 @@ github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd h1:TRLaZ9cD/w
 github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
 github.com/modern-go/reflect2 v1.0.2 h1:xBagoLtFs94CBntxluKeaWgTMpvLxC4ur3nMaC9Gz0M=
 github.com/modern-go/reflect2 v1.0.2/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjYzDa0/r8luk=
-github.com/nbd-wtf/go-nostr v0.44.2 h1:+DHDbHuUZS3Fkh9w4j2v64sTLC4fY8ktuiBsNg9GcXg=
-github.com/nbd-wtf/go-nostr v0.44.2/go.mod h1:m0ID2gSA2Oak/uaPnM1uN22JhDRZS4UVJG2c8jo19rg=
+github.com/nbd-wtf/go-nostr v0.45.0 h1:4WaMg0Yvda9gBcyRq9KtI32lPeFY8mbX0eFlfdnLrSE=
+github.com/nbd-wtf/go-nostr v0.45.0/go.mod h1:m0ID2gSA2Oak/uaPnM1uN22JhDRZS4UVJG2c8jo19rg=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.7.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
