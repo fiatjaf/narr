@@ -1,0 +1,38 @@
+FROM --platform=$BUILDPLATFORM golang:1.23-bookworm AS build
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    gcc-aarch64-linux-gnu \
+    binutils-aarch64-linux-gnu \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy source files
+WORKDIR /src
+COPY . .
+
+# Build
+ARG TARGETOS TARGETARCH
+RUN GOOS=$TARGETOS \
+    GOARCH=$TARGETARCH \
+    CGO_CFLAGS="-D_LARGEFILE64_SOURCE" \
+    CC=aarch64-linux-gnu-gcc \
+    make build_linux
+
+# Final image
+FROM debian:bookworm-slim
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    ca-certificates && \
+    update-ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy executable
+COPY --from=build /src/_output/linux/narr /usr/local/bin/narr
+
+VOLUME [ "/data" ]
+
+EXPOSE 7049
+ENTRYPOINT ["/usr/local/bin/narr"]
+CMD ["-addr", "0.0.0.0:7049", "-db", "/data/narr.db"]
