@@ -3,11 +3,11 @@ module github.com/fiatjaf/narr
 go 1.23.3
 
 require (
-	github.com/mattn/go-sqlite3 v1.14.18
-	github.com/nbd-wtf/go-nostr v0.45.0
+	github.com/mattn/go-sqlite3 v1.14.24
+	github.com/nbd-wtf/go-nostr v0.48.4
 	github.com/puzpuzpuz/xsync/v3 v3.4.0
-	golang.org/x/net v0.26.0
-	golang.org/x/sys v0.28.0
+	golang.org/x/net v0.34.0
+	golang.org/x/sys v0.29.0
 )
 
 require (
@@ -16,18 +16,16 @@ require (
 	github.com/btcsuite/btcd/btcutil v1.1.3 // indirect
 	github.com/btcsuite/btcd/chaincfg/chainhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+	github.com/coder/websocket v1.8.12 // indirect
 	github.com/decred/dcrd/crypto/blake256 v1.1.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 // indirect
 	github.com/dgraph-io/ristretto v1.0.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/fiatjaf/eventstore v0.9.0 // indirect
-	github.com/gobwas/httphead v0.1.0 // indirect
-	github.com/gobwas/pool v0.2.1 // indirect
-	github.com/gobwas/ws v1.4.0 // indirect
+	github.com/fiatjaf/eventstore v0.15.0 // indirect
 	github.com/gomarkdown/markdown v0.0.0-20241205020045-f7e15b2f3e62 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/graph-gophers/dataloader/v7 v7.1.0 // indirect
-	github.com/jmoiron/sqlx v1.3.5 // indirect
+	github.com/jmoiron/sqlx v1.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/mailru/easyjson v0.9.0 // indirect
@@ -39,5 +37,5 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	golang.org/x/exp v0.0.0-20241217172543-b2144cdd0a67 // indirect
-	golang.org/x/text v0.19.0 // indirect
+	golang.org/x/text v0.21.0 // indirect
 )
