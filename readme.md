@@ -3,7 +3,8 @@
 **narr** (not another rss reader) is a web-based RSS and Nostr long-form feed aggregator
 which can be used both as a desktop application and a personal self-hosted server.
 
-The app is a single binary with an embedded database (SQLite), it is based on [yarr](https://github.com/nkanaev/yarr).
+The app is a single binary with an embedded database (SQLite), it is based on
+[yarr](https://github.com/nkanaev/yarr).
 
 ![screenshot](etc/promo.png)
 
