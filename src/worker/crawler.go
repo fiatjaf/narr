@@ -16,6 +16,9 @@ import (
 	"golang.org/x/net/html/charset"
 )
 
+// maxBodyBytes limits HTTP response reads to 10 MB to prevent memory exhaustion.
+const maxBodyBytes = 10 * 1024 * 1024
+
 type FeedSource struct {
 	Title string `json:"title"`
 	Url   string `json:"url"`
@@ -46,7 +49,7 @@ func DiscoverFeed(candidateUrl string) (*DiscoverResult, error) {
 	}
 	cs := getCharset(res)
 
-	body, err := io.ReadAll(res.Body)
+	body, err := io.ReadAll(io.LimitReader(res.Body, maxBodyBytes))
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +113,7 @@ func findFavicon(siteUrl, feedUrl string) (*[]byte, error) {
 	if siteUrl != "" {
 		if res, err := client.get(siteUrl); err == nil {
 			defer res.Body.Close()
-			if body, err := io.ReadAll(res.Body); err == nil {
+			if body, err := io.ReadAll(io.LimitReader(res.Body, maxBodyBytes)); err == nil {
 				urls = append(urls, scraper.FindIcons(string(body), siteUrl)...)
 				if c := favicon(siteUrl); c != "" {
 					urls = append(urls, c)
@@ -137,7 +140,7 @@ func getIcons(urls []string) (*[]byte, error) {
 			continue
 		}
 
-		content, err := io.ReadAll(res.Body)
+		content, err := io.ReadAll(io.LimitReader(res.Body, maxBodyBytes))
 		if err != nil {
 			continue
 		}
@@ -249,7 +252,7 @@ func GetBody(url string) (string, error) {
 	} else {
 		r = res.Body
 	}
-	body, err := io.ReadAll(r)
+	body, err := io.ReadAll(io.LimitReader(r, maxBodyBytes))
 	if err != nil {
 		return "", err
 	}

@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
+	"net/url"
 	"path/filepath"
 	"reflect"
 	"strconv"
@@ -507,12 +509,53 @@ func (s *Server) handleOPMLExport(c *router.Context) {
 	}
 }
 
+// isSafeURL rejects non-HTTP(S) schemes and private/loopback IP ranges
+// to prevent SSRF attacks that could expose local services or files.
+func isSafeURL(rawURL string) bool {
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		return false
+	}
+	if u.Scheme != "http" && u.Scheme != "https" {
+		return false
+	}
+	host := u.Hostname()
+	ip := net.ParseIP(host)
+	if ip == nil {
+		// resolve hostname
+		addrs, err := net.LookupHost(host)
+		if err != nil || len(addrs) == 0 {
+			return true // let the HTTP client handle DNS errors
+		}
+		ip = net.ParseIP(addrs[0])
+	}
+	if ip != nil {
+		private := []string{
+			"127.0.0.0/8", "10.0.0.0/8", "172.16.0.0/12",
+			"192.168.0.0/16", "169.254.0.0/16", "::1/128", "fc00::/7",
+		}
+		for _, cidr := range private {
+			_, block, _ := net.ParseCIDR(cidr)
+			if block.Contains(ip) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 func (s *Server) handlePageCrawl(c *router.Context) {
 	url := c.Req.URL.Query().Get("url")
 
 	if newUrl := silo.RedirectURL(url); newUrl != "" {
 		url = newUrl
 	}
+
+	if !isSafeURL(url) {
+		c.Out.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	if content := silo.VideoIFrame(url); content != "" {
 		c.JSON(http.StatusOK, map[string]string{
 			"content": sanitizer.Sanitize(url, content),
