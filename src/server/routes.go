@@ -38,6 +38,7 @@ func (s *Server) handler() http.Handler {
 			Password: s.Password,
 			Public:   []string{"/static", "/fever"},
 			DB:       s.db,
+			Secure:   s.CertFile != "" && s.KeyFile != "",
 		}
 		r.Use(a.Handler)
 	}
@@ -239,6 +240,11 @@ func (s *Server) handleFeedList(c *router.Context) {
 			form.Url = "nostr:" + form.Url
 		} else if !strings.HasPrefix(form.Url, "nostr:") && !strings.HasPrefix(form.Url, "http") {
 			form.Url = "https://" + form.Url
+		}
+
+		if !strings.HasPrefix(form.Url, "nostr:") && !isSafeURL(form.Url) {
+			c.JSON(http.StatusOK, map[string]string{"status": "notfound"})
+			return
 		}
 
 		result, err := worker.DiscoverFeed(form.Url)
@@ -510,7 +516,11 @@ func (s *Server) handleOPMLExport(c *router.Context) {
 }
 
 // isSafeURL rejects non-HTTP(S) schemes and private/loopback IP ranges
-// to prevent SSRF attacks that could expose local services or files.
+// to prevent SSRF attacks that could expose local services or files. This
+// is a fast pre-check for a clean error response; the shared HTTP client
+// (src/worker/client.go) enforces the same restriction at dial time on
+// every request and redirect hop, so this check being bypassed or stale
+// (e.g. DNS changing between this check and the actual fetch) isn't a gap.
 func isSafeURL(rawURL string) bool {
 	u, err := url.Parse(rawURL)
 	if err != nil {
@@ -520,25 +530,16 @@ func isSafeURL(rawURL string) bool {
 		return false
 	}
 	host := u.Hostname()
-	ip := net.ParseIP(host)
-	if ip == nil {
-		// resolve hostname
-		addrs, err := net.LookupHost(host)
-		if err != nil || len(addrs) == 0 {
-			return true // let the HTTP client handle DNS errors
-		}
-		ip = net.ParseIP(addrs[0])
+	if ip := net.ParseIP(host); ip != nil {
+		return !worker.IsPrivateIP(ip)
 	}
-	if ip != nil {
-		private := []string{
-			"127.0.0.0/8", "10.0.0.0/8", "172.16.0.0/12",
-			"192.168.0.0/16", "169.254.0.0/16", "::1/128", "fc00::/7",
-		}
-		for _, cidr := range private {
-			_, block, _ := net.ParseCIDR(cidr)
-			if block.Contains(ip) {
-				return false
-			}
+	addrs, err := net.LookupHost(host)
+	if err != nil || len(addrs) == 0 {
+		return true // let the HTTP client handle DNS errors
+	}
+	for _, addr := range addrs {
+		if ip := net.ParseIP(addr); ip != nil && worker.IsPrivateIP(ip) {
+			return false
 		}
 	}
 	return true

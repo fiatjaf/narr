@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/fiatjaf/narr/src/content/sanitizer"
 	"github.com/fiatjaf/narr/src/server/auth"
 	"github.com/fiatjaf/narr/src/server/router"
 	"github.com/fiatjaf/narr/src/storage"
@@ -270,7 +271,7 @@ func (s *Server) feverItemsHandler(c *router.Context) {
 			FeedID:    item.FeedId,
 			Title:     item.Title,
 			Author:    "",
-			HTML:      item.Content,
+			HTML:      sanitizer.Sanitize(item.Link, item.Content),
 			Url:       item.Link,
 			IsSaved:   isSaved,
 			IsRead:    isRead,
