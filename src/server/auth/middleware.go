@@ -15,6 +15,7 @@ type Middleware struct {
 	BasePath string
 	Public   []string
 	DB       *storage.Storage
+	Secure   bool
 }
 
 func unsafeMethod(method string) bool {
@@ -44,7 +45,7 @@ func (m *Middleware) Handler(c *router.Context) {
 		username := c.Req.FormValue("username")
 		password := c.Req.FormValue("password")
 		if StringsEqual(username, m.Username) && StringsEqual(password, m.Password) {
-			Authenticate(c.Out, m.Username, m.Password, m.BasePath)
+			Authenticate(c.Out, m.Username, m.Password, m.BasePath, m.Secure)
 			c.Redirect(rootUrl)
 			return
 		} else {

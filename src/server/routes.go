@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
+	"net/url"
 	"path/filepath"
 	"reflect"
 	"strconv"
@@ -36,6 +38,7 @@ func (s *Server) handler() http.Handler {
 			Password: s.Password,
 			Public:   []string{"/static", "/fever"},
 			DB:       s.db,
+			Secure:   s.CertFile != "" && s.KeyFile != "",
 		}
 		r.Use(a.Handler)
 	}
@@ -237,6 +240,11 @@ func (s *Server) handleFeedList(c *router.Context) {
 			form.Url = "nostr:" + form.Url
 		} else if !strings.HasPrefix(form.Url, "nostr:") && !strings.HasPrefix(form.Url, "http") {
 			form.Url = "https://" + form.Url
+		}
+
+		if !strings.HasPrefix(form.Url, "nostr:") && !isSafeURL(form.Url) {
+			c.JSON(http.StatusOK, map[string]string{"status": "notfound"})
+			return
 		}
 
 		result, err := worker.DiscoverFeed(form.Url)
@@ -507,12 +515,48 @@ func (s *Server) handleOPMLExport(c *router.Context) {
 	}
 }
 
+// isSafeURL rejects non-HTTP(S) schemes and private/loopback IP ranges
+// to prevent SSRF attacks that could expose local services or files. This
+// is a fast pre-check for a clean error response; the shared HTTP client
+// (src/worker/client.go) enforces the same restriction at dial time on
+// every request and redirect hop, so this check being bypassed or stale
+// (e.g. DNS changing between this check and the actual fetch) isn't a gap.
+func isSafeURL(rawURL string) bool {
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		return false
+	}
+	if u.Scheme != "http" && u.Scheme != "https" {
+		return false
+	}
+	host := u.Hostname()
+	if ip := net.ParseIP(host); ip != nil {
+		return !worker.IsPrivateIP(ip)
+	}
+	addrs, err := net.LookupHost(host)
+	if err != nil || len(addrs) == 0 {
+		return true // let the HTTP client handle DNS errors
+	}
+	for _, addr := range addrs {
+		if ip := net.ParseIP(addr); ip != nil && worker.IsPrivateIP(ip) {
+			return false
+		}
+	}
+	return true
+}
+
 func (s *Server) handlePageCrawl(c *router.Context) {
 	url := c.Req.URL.Query().Get("url")
 
 	if newUrl := silo.RedirectURL(url); newUrl != "" {
 		url = newUrl
 	}
+
+	if !isSafeURL(url) {
+		c.Out.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	if content := silo.VideoIFrame(url); content != "" {
 		c.JSON(http.StatusOK, map[string]string{
 			"content": sanitizer.Sanitize(url, content),
